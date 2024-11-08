@@ -5,8 +5,15 @@
       "camelcase": "Mor",
       "scope": "source.mor",
       "path": ".",
-      "file-types": null,
-      "injection-regex": "^mor$"
+      "file-types": [
+        "mo"
+      ],
+      "highlights": [
+        "queries/highlights.scm"
+      ],
+      "locals": [
+        "queries/locals.scm"
+      ]
     }
   ],
   "metadata": {

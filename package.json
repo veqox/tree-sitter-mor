@@ -2,11 +2,12 @@
   "name": "tree-sitter-mor",
   "version": "0.1.0",
   "description": "Mor grammar for tree-sitter",
-  "repository": "github:tree-sitter/tree-sitter-mor",
+  "repository": "github:veqox/tree-sitter-mor",
   "license": "MIT",
   "author": {
     "name": "veqox"
   },
+  "type": "module",
   "main": "bindings/node",
   "types": "bindings/node",
   "keywords": [
@@ -49,7 +50,12 @@
   "tree-sitter": [
     {
       "scope": "source.mor",
-      "injection-regex": "^mor$"
+      "file-types": [
+        "mo"
+      ],
+      "highlights": [
+        "queries/highlights.scm"
+      ]
     }
   ]
 }
