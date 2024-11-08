@@ -52,9 +52,6 @@
       "scope": "source.mor",
       "file-types": [
         "mo"
-      ],
-      "highlights": [
-        "queries/highlights.scm"
       ]
     }
   ]

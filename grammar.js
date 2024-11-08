@@ -7,13 +7,7 @@
 /// <reference types="tree-sitter-cli/dsl" />
 // @ts-check
 
-const left_parenthesis = "(";
-const right_parenthesis = ")";
-const left_brace = "{";
-const right_brace = "}";
-const comma = ",";
-const mutable_assignment_operator = "::";
-const immutable_assignment_operator = ":=";
+const TYPES = ["i8", "str"];
 
 export default grammar({
   name: "mor",
@@ -21,38 +15,83 @@ export default grammar({
   rules: {
     source_file: ($) => repeat($._statement),
 
-    _statement: ($) => choice($.function_declaration, $.variable_declaration),
+    _statement: ($) =>
+      choice($._expression_statement, $._declaration_statement),
 
-    assignment_operator: ($) =>
-      choice(mutable_assignment_operator, immutable_assignment_operator),
+    _expression_statement: ($) => seq($._expression, ";"),
+
+    _declaration_statement: ($) =>
+      choice($.function_declaration, $.variable_declaration),
+
     identifier: ($) => /[a-zA-Z_][a-zA-Z0-9_]*/,
+    macro_identifier: ($) => /[$][a-zA-Z_][a-zA-Z0-9_]*/,
     number: ($) => /\d+/,
     string: ($) => /"([^"\\]|\\.)*"/,
 
+    assignment_operator: ($) => choice(":", "="),
+
+    _type: ($) => choice(...TYPES),
+
     function_declaration: ($) =>
-      seq(field("identifier", $.identifier), $.assignment_operator, $.function_expression),
-
-    function_expression: ($) =>
-      seq(left_parenthesis, optional($.parameters), right_parenthesis, $.block),
-
-    parameters: ($) => seq($.identifier, repeat(seq(comma, $.identifier))),
-
-    block: ($) => seq(left_brace, repeat($._statement), right_brace),
-
-    variable_declaration: ($) =>
-      seq($.identifier, $.assignment_operator, $.expression),
-
-    expression: ($) =>
-      choice($.identifier, $.number, $.string, $.function_call),
-
-    function_call: ($) =>
       seq(
-        field("identifier", $.identifier),
-        left_parenthesis,
-        optional($.arguments),
-        right_parenthesis,
+        field("name", $.identifier),
+        $.assignment_operator,
+        field("type", optional($._type)),
+        $.assignment_operator,
+        "(",
+        field("parameters", optional($.parameters)),
+        ")",
+        $.block,
       ),
 
-    arguments: ($) => seq($.expression, repeat(seq(comma, $.expression))),
+    parameters: ($) =>
+      seq(
+        $.identifier,
+        choice(seq($.assignment_operator, $._type)),
+        repeat(
+          seq(
+            ",",
+            seq($.identifier, choice(seq($.assignment_operator, $._type))),
+          ),
+        ),
+      ),
+
+    block: ($) => seq("{", repeat($._statement), "}"),
+
+    variable_declaration: ($) =>
+      seq(
+        field("name", $.identifier),
+        $.assignment_operator,
+        field("type", optional($._type)),
+        $.assignment_operator,
+        field("value", choice($._expression, $.number, $.string, $.identifier)),
+        ";",
+      ),
+
+    _expression: ($) => choice($.call_expression, $.macro_expression),
+
+    call_expression: ($) =>
+      seq(
+        field("name", $.identifier),
+        "(",
+        field("arguments", optional($.arguments)),
+        ")",
+      ),
+
+    macro_expression: ($) =>
+      seq(
+        field("name", $.macro_identifier),
+        "(",
+        field("arguments", $.arguments),
+        ")",
+      ),
+
+    arguments: ($) =>
+      seq(
+        choice($._expression, $.number, $.string, $.identifier),
+        repeat(
+          seq(",", choice($._expression, $.number, $.string, $.identifier)),
+        ),
+      ),
   },
 });

@@ -1,4 +1,30 @@
-(function_declaration identifier: (identifier) @function)
-(function_call identifier: (identifier) @function)
+(identifier) @variable
 
-(assignment_operator) @assignment
+(assignment_operator) @operator
+
+(function_declaration name: (identifier) @function)
+(call_expression name: (identifier) @function)
+(macro_expression name: (macro_identifier) @function)
+
+(parameters (identifier) @variable.parameter)
+
+(string) @string
+
+(number) @number
+
+[
+  "{"
+  "}"
+  "("
+  ")"
+] @punctuation.bracket
+
+[
+  ","
+  ";"
+] @punctuation.delimiter
+
+[
+  "i8"
+  "str"
+] @type
