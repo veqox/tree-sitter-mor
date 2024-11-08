@@ -16,7 +16,7 @@ export default grammar({
     source_file: ($) => repeat($._statement),
 
     _statement: ($) =>
-      choice($._expression_statement, $._declaration_statement),
+      choice($._expression_statement, $._declaration_statement, $.if_statement),
 
     _expression_statement: ($) => seq($._expression, ";"),
 
@@ -30,6 +30,8 @@ export default grammar({
 
     assignment_operator: ($) => choice(":", "="),
 
+    comparison_operator: ($) => choice("==", "!=", "<", ">", "<=", ">="),
+
     _type: ($) => choice(...TYPES),
 
     function_declaration: ($) =>
@@ -39,7 +41,7 @@ export default grammar({
         field("type", optional($._type)),
         $.assignment_operator,
         "(",
-        field("parameters", optional($.parameters)),
+        field("parameters", $.parameters),
         ")",
         $.block,
       ),
@@ -47,11 +49,11 @@ export default grammar({
     parameters: ($) =>
       seq(
         $.identifier,
-        choice(seq($.assignment_operator, $._type)),
+        optional(seq($.assignment_operator, $._type)),
         repeat(
           seq(
             ",",
-            seq($.identifier, choice(seq($.assignment_operator, $._type))),
+            seq($.identifier, optional(seq($.assignment_operator, $._type))),
           ),
         ),
       ),
@@ -93,5 +95,32 @@ export default grammar({
           seq(",", choice($._expression, $.number, $.string, $.identifier)),
         ),
       ),
+
+    comparison: ($) =>
+      seq(
+        choice($._expression, $.number, $.string, $.identifier),
+        $.comparison_operator,
+        choice($._expression, $.number, $.string, $.identifier),
+      ),
+
+    _condition: ($) => choice($._expression, $.comparison),
+
+    if_statement: ($) =>
+      seq(
+        "if",
+        $._condition,
+        $.block,
+        optional(choice($.else_if_statement, $.else_statement)),
+      ),
+
+    else_if_statement: ($) =>
+      seq(
+        "elif",
+        $._condition,
+        $.block,
+        optional(choice($.else_if_statement, $.else_statement)),
+      ),
+
+    else_statement: ($) => seq("else", $.block),
   },
 });

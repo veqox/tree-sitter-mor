@@ -1,6 +1,7 @@
 (identifier) @variable
 
 (assignment_operator) @operator
+(comparison_operator) @operator
 
 (function_declaration name: (identifier) @function)
 (call_expression name: (identifier) @function)
@@ -28,3 +29,9 @@
   "i8"
   "str"
 ] @type
+
+[
+  "if"
+  "elif"
+  "else"
+] @keyword
