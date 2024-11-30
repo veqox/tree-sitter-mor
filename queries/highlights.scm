@@ -25,13 +25,4 @@
   ";"
 ] @punctuation.delimiter
 
-[
-  "i8"
-  "str"
-] @type
-
-[
-  "if"
-  "elif"
-  "else"
-] @keyword
+(type) @keyword

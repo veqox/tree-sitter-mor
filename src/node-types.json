@@ -211,12 +211,8 @@
         "required": false,
         "types": [
           {
-            "type": "i8",
-            "named": false
-          },
-          {
-            "type": "str",
-            "named": false
+            "type": "type",
+            "named": true
           }
         ]
       }
@@ -231,6 +227,10 @@
         },
         {
           "type": "block",
+          "named": true
+        },
+        {
+          "type": "type",
           "named": true
         }
       ]
@@ -312,6 +312,10 @@
         {
           "type": "identifier",
           "named": true
+        },
+        {
+          "type": "type",
+          "named": true
         }
       ]
     }
@@ -349,6 +353,11 @@
     }
   },
   {
+    "type": "type",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "variable_declaration",
     "named": true,
     "fields": {
@@ -367,12 +376,8 @@
         "required": false,
         "types": [
           {
-            "type": "i8",
-            "named": false
-          },
-          {
-            "type": "str",
-            "named": false
+            "type": "type",
+            "named": true
           }
         ]
       },
@@ -428,6 +433,10 @@
   },
   {
     "type": ",",
+    "named": false
+  },
+  {
+    "type": "->",
     "named": false
   },
   {

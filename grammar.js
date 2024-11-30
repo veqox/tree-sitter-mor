@@ -7,7 +7,22 @@
 /// <reference types="tree-sitter-cli/dsl" />
 // @ts-check
 
-const TYPES = ["i8", "str"];
+const TYPES = [
+  "i8",
+  "i16",
+  "i32",
+  "i64",
+  "u8",
+  "u16",
+  "u32",
+  "u64",
+  "f8",
+  "f16",
+  "f32",
+  "f64",
+  "str",
+  "!",
+];
 
 export default grammar({
   name: "mor",
@@ -32,28 +47,29 @@ export default grammar({
 
     comparison_operator: ($) => choice("==", "!=", "<", ">", "<=", ">="),
 
-    _type: ($) => choice(...TYPES),
+    type: ($) => choice(...TYPES),
 
     function_declaration: ($) =>
       seq(
         field("name", $.identifier),
         $.assignment_operator,
-        field("type", optional($._type)),
+        field("type", optional($.type)),
         $.assignment_operator,
         "(",
         field("parameters", $.parameters),
         ")",
+        optional(seq("->", $.type)),
         $.block,
       ),
 
     parameters: ($) =>
       seq(
         $.identifier,
-        optional(seq($.assignment_operator, $._type)),
+        optional(seq($.assignment_operator, $.type)),
         repeat(
           seq(
             ",",
-            seq($.identifier, optional(seq($.assignment_operator, $._type))),
+            seq($.identifier, optional(seq($.assignment_operator, $.type))),
           ),
         ),
       ),
@@ -64,7 +80,7 @@ export default grammar({
       seq(
         field("name", $.identifier),
         $.assignment_operator,
-        field("type", optional($._type)),
+        field("type", optional($.type)),
         $.assignment_operator,
         field("value", choice($._expression, $.number, $.string, $.identifier)),
         ";",
