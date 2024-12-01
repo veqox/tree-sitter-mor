@@ -2,6 +2,8 @@
 
 (assignment_operator) @operator
 (comparison_operator) @operator
+(binary_operator) @operator
+(unary_operator) @operator
 
 (function_declaration name: (identifier) @function)
 (call_expression name: (identifier) @function)
@@ -24,5 +26,13 @@
   ","
   ";"
 ] @punctuation.delimiter
+
+[
+  "if"
+  "elif"
+  "else"
+  "return"
+  "while"
+] @keyword
 
 (type) @keyword

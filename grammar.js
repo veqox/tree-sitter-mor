@@ -31,21 +31,35 @@ export default grammar({
     source_file: ($) => repeat($._statement),
 
     _statement: ($) =>
-      choice($._expression_statement, $._declaration_statement, $.if_statement),
-
-    _expression_statement: ($) => seq($._expression, ";"),
+      choice(
+        $._expression_statement,
+        $._declaration_statement,
+        $.if_statement,
+        $.while_statement,
+        $.return_statement,
+      ),
 
     _declaration_statement: ($) =>
       choice($.function_declaration, $.variable_declaration),
+
+    _expression_statement: ($) => seq($._expression, optional(";")),
 
     identifier: ($) => /[a-zA-Z_][a-zA-Z0-9_]*/,
     macro_identifier: ($) => /[$][a-zA-Z_][a-zA-Z0-9_]*/,
     number: ($) => /\d+/,
     string: ($) => /"([^"\\]|\\.)*"/,
 
-    assignment_operator: ($) => choice(":", "="),
+    assignment_operator: ($) =>
+      prec.left(choice(":", "=", "+=", "-=", "*=", "/=", "%=", "&=", "|=")),
 
     comparison_operator: ($) => choice("==", "!=", "<", ">", "<=", ">="),
+
+    binary_operator: ($) =>
+      prec.left(
+        choice("+", "-", "*", "/", "%", "&&", "||", "&", "|", "<<", ">>"),
+      ),
+
+    unary_operator: ($) => choice("!", "~", "-"),
 
     type: ($) => choice(...TYPES),
 
@@ -56,7 +70,7 @@ export default grammar({
         field("type", optional($.type)),
         $.assignment_operator,
         "(",
-        field("parameters", $.parameters),
+        field("parameters", optional($.parameters)),
         ")",
         optional(seq("->", $.type)),
         $.block,
@@ -77,16 +91,22 @@ export default grammar({
     block: ($) => seq("{", repeat($._statement), "}"),
 
     variable_declaration: ($) =>
-      seq(
-        field("name", $.identifier),
-        $.assignment_operator,
-        field("type", optional($.type)),
-        $.assignment_operator,
-        field("value", choice($._expression, $.number, $.string, $.identifier)),
-        ";",
+      prec.right(
+        seq(
+          field("name", $.identifier),
+          $.assignment_operator,
+          field("type", optional($.type)),
+          $.assignment_operator,
+          field(
+            "value",
+            choice($._expression, $.number, $.string, $.identifier),
+          ),
+          optional(";"),
+        ),
       ),
 
-    _expression: ($) => choice($.call_expression, $.macro_expression),
+    _expression: ($) =>
+      choice($.call_expression, $.macro_expression, $.number_expression),
 
     call_expression: ($) =>
       seq(
@@ -104,6 +124,18 @@ export default grammar({
         ")",
       ),
 
+    number_expression: ($) =>
+      prec.right(
+        choice(
+          seq(
+            choice($.number, $.identifier),
+            $.binary_operator,
+            choice($.number, $.identifier, $.number_expression),
+          ),
+          seq($.unary_operator, $.number),
+        ),
+      ),
+
     arguments: ($) =>
       seq(
         choice($._expression, $.number, $.string, $.identifier),
@@ -119,7 +151,7 @@ export default grammar({
         choice($._expression, $.number, $.string, $.identifier),
       ),
 
-    _condition: ($) => choice($._expression, $.comparison),
+    _condition: ($) => choice($._expression, $.comparison, $.number),
 
     if_statement: ($) =>
       seq(
@@ -138,5 +170,12 @@ export default grammar({
       ),
 
     else_statement: ($) => seq("else", $.block),
+
+    while_statement: ($) => seq("while", $._condition, $.block),
+
+    return_statement: ($) =>
+      prec.right(
+        seq("return", choice($._expression, $.number, $.string, $.identifier)),
+      ),
   },
 });
