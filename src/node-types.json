@@ -8,6 +8,10 @@
       "required": true,
       "types": [
         {
+          "type": "binary_expression",
+          "named": true
+        },
+        {
           "type": "call_expression",
           "named": true
         },
@@ -16,19 +20,15 @@
           "named": true
         },
         {
-          "type": "macro_expression",
-          "named": true
-        },
-        {
           "type": "number",
           "named": true
         },
         {
-          "type": "number_expression",
+          "type": "string",
           "named": true
         },
         {
-          "type": "string",
+          "type": "unary_expression",
           "named": true
         }
       ]
@@ -38,6 +38,86 @@
     "type": "assignment_operator",
     "named": true,
     "fields": {}
+  },
+  {
+    "type": "binary_expression",
+    "named": true,
+    "fields": {
+      "left": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "binary_expression",
+            "named": true
+          },
+          {
+            "type": "call_expression",
+            "named": true
+          },
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "number",
+            "named": true
+          },
+          {
+            "type": "string",
+            "named": true
+          },
+          {
+            "type": "unary_expression",
+            "named": true
+          }
+        ]
+      },
+      "right": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "binary_expression",
+            "named": true
+          },
+          {
+            "type": "call_expression",
+            "named": true
+          },
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "number",
+            "named": true
+          },
+          {
+            "type": "string",
+            "named": true
+          },
+          {
+            "type": "unary_expression",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "binary_operator",
+          "named": true
+        },
+        {
+          "type": "comparison_operator",
+          "named": true
+        }
+      ]
+    }
   },
   {
     "type": "binary_operator",
@@ -57,7 +137,7 @@
           "named": true
         },
         {
-          "type": "function_declaration",
+          "type": "function_declaration_statement",
           "named": true
         },
         {
@@ -69,15 +149,15 @@
           "named": true
         },
         {
-          "type": "number_expression",
-          "named": true
-        },
-        {
           "type": "return_statement",
           "named": true
         },
         {
-          "type": "variable_declaration",
+          "type": "variable_assignment_statement",
+          "named": true
+        },
+        {
+          "type": "variable_declaration_statement",
           "named": true
         },
         {
@@ -114,7 +194,12 @@
     }
   },
   {
-    "type": "comparison",
+    "type": "comparison_operator",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "compound_assignment_operator",
     "named": true,
     "fields": {},
     "children": {
@@ -122,40 +207,15 @@
       "required": true,
       "types": [
         {
-          "type": "call_expression",
+          "type": "assignment_operator",
           "named": true
         },
         {
-          "type": "comparison_operator",
-          "named": true
-        },
-        {
-          "type": "identifier",
-          "named": true
-        },
-        {
-          "type": "macro_expression",
-          "named": true
-        },
-        {
-          "type": "number",
-          "named": true
-        },
-        {
-          "type": "number_expression",
-          "named": true
-        },
-        {
-          "type": "string",
+          "type": "binary_operator",
           "named": true
         }
       ]
     }
-  },
-  {
-    "type": "comparison_operator",
-    "named": true,
-    "fields": {}
   },
   {
     "type": "else_if_statement",
@@ -166,6 +226,10 @@
       "required": true,
       "types": [
         {
+          "type": "binary_expression",
+          "named": true
+        },
+        {
           "type": "block",
           "named": true
         },
@@ -174,19 +238,7 @@
           "named": true
         },
         {
-          "type": "comparison",
-          "named": true
-        },
-        {
-          "type": "else_if_statement",
-          "named": true
-        },
-        {
-          "type": "else_statement",
-          "named": true
-        },
-        {
-          "type": "macro_expression",
+          "type": "identifier",
           "named": true
         },
         {
@@ -194,7 +246,11 @@
           "named": true
         },
         {
-          "type": "number_expression",
+          "type": "string",
+          "named": true
+        },
+        {
+          "type": "unary_expression",
           "named": true
         }
       ]
@@ -216,7 +272,7 @@
     }
   },
   {
-    "type": "function_declaration",
+    "type": "function_declaration_statement",
     "named": true,
     "fields": {
       "name": {
@@ -225,26 +281,6 @@
         "types": [
           {
             "type": "identifier",
-            "named": true
-          }
-        ]
-      },
-      "parameters": {
-        "multiple": false,
-        "required": false,
-        "types": [
-          {
-            "type": "parameters",
-            "named": true
-          }
-        ]
-      },
-      "type": {
-        "multiple": false,
-        "required": false,
-        "types": [
-          {
-            "type": "type",
             "named": true
           }
         ]
@@ -263,7 +299,15 @@
           "named": true
         },
         {
+          "type": "parameters",
+          "named": true
+        },
+        {
           "type": "type",
+          "named": true
+        },
+        {
+          "type": "type_annotation_operator",
           "named": true
         }
       ]
@@ -278,15 +322,15 @@
       "required": true,
       "types": [
         {
+          "type": "binary_expression",
+          "named": true
+        },
+        {
           "type": "block",
           "named": true
         },
         {
           "type": "call_expression",
-          "named": true
-        },
-        {
-          "type": "comparison",
           "named": true
         },
         {
@@ -298,7 +342,7 @@
           "named": true
         },
         {
-          "type": "macro_expression",
+          "type": "identifier",
           "named": true
         },
         {
@@ -306,7 +350,11 @@
           "named": true
         },
         {
-          "type": "number_expression",
+          "type": "string",
+          "named": true
+        },
+        {
+          "type": "unary_expression",
           "named": true
         }
       ]
@@ -339,37 +387,6 @@
     }
   },
   {
-    "type": "number_expression",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "binary_operator",
-          "named": true
-        },
-        {
-          "type": "identifier",
-          "named": true
-        },
-        {
-          "type": "number",
-          "named": true
-        },
-        {
-          "type": "number_expression",
-          "named": true
-        },
-        {
-          "type": "unary_operator",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
     "type": "parameters",
     "named": true,
     "fields": {},
@@ -378,15 +395,15 @@
       "required": true,
       "types": [
         {
-          "type": "assignment_operator",
-          "named": true
-        },
-        {
           "type": "identifier",
           "named": true
         },
         {
           "type": "type",
+          "named": true
+        },
+        {
+          "type": "type_annotation_operator",
           "named": true
         }
       ]
@@ -401,6 +418,10 @@
       "required": true,
       "types": [
         {
+          "type": "binary_expression",
+          "named": true
+        },
+        {
           "type": "call_expression",
           "named": true
         },
@@ -409,19 +430,15 @@
           "named": true
         },
         {
-          "type": "macro_expression",
-          "named": true
-        },
-        {
           "type": "number",
           "named": true
         },
         {
-          "type": "number_expression",
+          "type": "string",
           "named": true
         },
         {
-          "type": "string",
+          "type": "unary_expression",
           "named": true
         }
       ]
@@ -441,7 +458,7 @@
           "named": true
         },
         {
-          "type": "function_declaration",
+          "type": "function_declaration_statement",
           "named": true
         },
         {
@@ -453,15 +470,15 @@
           "named": true
         },
         {
-          "type": "number_expression",
-          "named": true
-        },
-        {
           "type": "return_statement",
           "named": true
         },
         {
-          "type": "variable_declaration",
+          "type": "variable_assignment_statement",
+          "named": true
+        },
+        {
+          "type": "variable_declaration_statement",
           "named": true
         },
         {
@@ -477,71 +494,139 @@
     "fields": {}
   },
   {
+    "type": "type_annotation_operator",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "unary_expression",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "binary_expression",
+          "named": true
+        },
+        {
+          "type": "call_expression",
+          "named": true
+        },
+        {
+          "type": "identifier",
+          "named": true
+        },
+        {
+          "type": "number",
+          "named": true
+        },
+        {
+          "type": "string",
+          "named": true
+        },
+        {
+          "type": "unary_expression",
+          "named": true
+        },
+        {
+          "type": "unary_operator",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "unary_operator",
     "named": true,
     "fields": {}
   },
   {
-    "type": "variable_declaration",
+    "type": "variable_assignment_statement",
     "named": true,
-    "fields": {
-      "name": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "identifier",
-            "named": true
-          }
-        ]
-      },
-      "type": {
-        "multiple": false,
-        "required": false,
-        "types": [
-          {
-            "type": "type",
-            "named": true
-          }
-        ]
-      },
-      "value": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "call_expression",
-            "named": true
-          },
-          {
-            "type": "identifier",
-            "named": true
-          },
-          {
-            "type": "macro_expression",
-            "named": true
-          },
-          {
-            "type": "number",
-            "named": true
-          },
-          {
-            "type": "number_expression",
-            "named": true
-          },
-          {
-            "type": "string",
-            "named": true
-          }
-        ]
-      }
-    },
+    "fields": {},
     "children": {
       "multiple": true,
       "required": true,
       "types": [
         {
           "type": "assignment_operator",
+          "named": true
+        },
+        {
+          "type": "binary_expression",
+          "named": true
+        },
+        {
+          "type": "call_expression",
+          "named": true
+        },
+        {
+          "type": "compound_assignment_operator",
+          "named": true
+        },
+        {
+          "type": "identifier",
+          "named": true
+        },
+        {
+          "type": "number",
+          "named": true
+        },
+        {
+          "type": "string",
+          "named": true
+        },
+        {
+          "type": "unary_expression",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "variable_declaration_statement",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "assignment_operator",
+          "named": true
+        },
+        {
+          "type": "binary_expression",
+          "named": true
+        },
+        {
+          "type": "call_expression",
+          "named": true
+        },
+        {
+          "type": "identifier",
+          "named": true
+        },
+        {
+          "type": "number",
+          "named": true
+        },
+        {
+          "type": "string",
+          "named": true
+        },
+        {
+          "type": "type",
+          "named": true
+        },
+        {
+          "type": "type_annotation_operator",
+          "named": true
+        },
+        {
+          "type": "unary_expression",
           "named": true
         }
       ]
@@ -556,6 +641,10 @@
       "required": true,
       "types": [
         {
+          "type": "binary_expression",
+          "named": true
+        },
+        {
           "type": "block",
           "named": true
         },
@@ -564,11 +653,7 @@
           "named": true
         },
         {
-          "type": "comparison",
-          "named": true
-        },
-        {
-          "type": "macro_expression",
+          "type": "identifier",
           "named": true
         },
         {
@@ -576,7 +661,11 @@
           "named": true
         },
         {
-          "type": "number_expression",
+          "type": "string",
+          "named": true
+        },
+        {
+          "type": "unary_expression",
           "named": true
         }
       ]
@@ -595,19 +684,11 @@
     "named": false
   },
   {
-    "type": "%=",
-    "named": false
-  },
-  {
     "type": "&",
     "named": false
   },
   {
     "type": "&&",
-    "named": false
-  },
-  {
-    "type": "&=",
     "named": false
   },
   {
@@ -623,15 +704,7 @@
     "named": false
   },
   {
-    "type": "*=",
-    "named": false
-  },
-  {
     "type": "+",
-    "named": false
-  },
-  {
-    "type": "+=",
     "named": false
   },
   {
@@ -643,19 +716,11 @@
     "named": false
   },
   {
-    "type": "-=",
-    "named": false
-  },
-  {
     "type": "->",
     "named": false
   },
   {
     "type": "/",
-    "named": false
-  },
-  {
-    "type": "/=",
     "named": false
   },
   {
@@ -795,19 +860,11 @@
     "named": false
   },
   {
-    "type": "|=",
-    "named": false
-  },
-  {
     "type": "||",
     "named": false
   },
   {
     "type": "}",
-    "named": false
-  },
-  {
-    "type": "~",
     "named": false
   }
 ]

@@ -1,11 +1,12 @@
 (identifier) @variable
 
 (assignment_operator) @operator
+(type_annotation_operator) @operator
 (comparison_operator) @operator
 (binary_operator) @operator
 (unary_operator) @operator
 
-(function_declaration name: (identifier) @function)
+(function_declaration_statement name: (identifier) @function)
 (call_expression name: (identifier) @function)
 (macro_expression name: (macro_identifier) @function)
 

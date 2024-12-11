@@ -29,84 +29,134 @@ export default grammar({
 
   rules: {
     source_file: ($) => repeat($._statement),
-
-    _statement: ($) =>
-      choice(
-        $._expression_statement,
-        $._declaration_statement,
-        $.if_statement,
-        $.while_statement,
-        $.return_statement,
-      ),
-
-    _declaration_statement: ($) =>
-      choice($.function_declaration, $.variable_declaration),
-
-    _expression_statement: ($) => seq($._expression, optional(";")),
+    block: ($) => seq("{", repeat($._statement), "}"),
 
     identifier: ($) => /[a-zA-Z_][a-zA-Z0-9_]*/,
     macro_identifier: ($) => /[$][a-zA-Z_][a-zA-Z0-9_]*/,
     number: ($) => /\d+/,
     string: ($) => /"([^"\\]|\\.)*"/,
-
-    assignment_operator: ($) =>
-      prec.left(choice(":", "=", "+=", "-=", "*=", "/=", "%=", "&=", "|=")),
-
-    comparison_operator: ($) => choice("==", "!=", "<", ">", "<=", ">="),
-
-    binary_operator: ($) =>
-      prec.left(
-        choice("+", "-", "*", "/", "%", "&&", "||", "&", "|", "<<", ">>"),
-      ),
-
-    unary_operator: ($) => choice("!", "~", "-"),
-
     type: ($) => choice(...TYPES),
 
-    function_declaration: ($) =>
+    binary_operator: ($) =>
+      choice("+", "-", "*", "/", "%", "&&", "||", "&", "|", "<<", ">>"),
+    unary_operator: ($) => choice("!", "-"),
+    comparison_operator: ($) => choice("==", "!=", "<", ">", "<=", ">="),
+    type_annotation_operator: ($) => prec.left(2, ":"),
+    assignment_operator: ($) => prec.right(choice(":", "=")),
+
+    compound_assignment_operator: ($) =>
+      seq($.binary_operator, $.assignment_operator),
+
+    _statement: ($) =>
       seq(
-        field("name", $.identifier),
-        $.assignment_operator,
-        field("type", optional($.type)),
-        $.assignment_operator,
-        "(",
-        field("parameters", optional($.parameters)),
-        ")",
-        optional(seq("->", $.type)),
-        $.block,
+        choice(
+          $.while_statement,
+          $.if_statement,
+          $.return_statement,
+          $.function_declaration_statement,
+          $.variable_declaration_statement,
+          $.variable_assignment_statement,
+          $._expression_statement,
+        ),
+        optional(";"),
+      ),
+
+    _expression: ($) =>
+      choice(
+        $.number,
+        $.identifier,
+        $.string,
+        $.binary_expression,
+        $.unary_expression,
+        $.call_expression,
+      ),
+
+    _expression_statement: ($) =>
+      prec.right(
+        seq(choice($.macro_expression, $.call_expression), optional(";")),
       ),
 
     parameters: ($) =>
       seq(
         $.identifier,
-        optional(seq($.assignment_operator, $.type)),
+        optional(seq($.type_annotation_operator, $.type)),
         repeat(
           seq(
             ",",
-            seq($.identifier, optional(seq($.assignment_operator, $.type))),
+            $.identifier,
+            optional(seq($.type_annotation_operator, $.type)),
           ),
         ),
       ),
 
-    block: ($) => seq("{", repeat($._statement), "}"),
+    arguments: ($) => seq($._expression, repeat(seq(",", $._expression))),
 
-    variable_declaration: ($) =>
-      prec.right(
+    // Statements
+
+    function_declaration_statement: ($) =>
+      prec(
+        10,
         seq(
           field("name", $.identifier),
+          $.type_annotation_operator,
+          optional($.type),
           $.assignment_operator,
-          field("type", optional($.type)),
-          $.assignment_operator,
-          field(
-            "value",
-            choice($._expression, $.number, $.string, $.identifier),
-          ),
-          optional(";"),
+          "(",
+          optional($.parameters),
+          ")",
+          optional(seq("->", $.type)),
+          $.block,
         ),
       ),
 
-    _expression: ($) =>
-      choice($.call_expression, $.macro_expression, $.number_expression),
+    variable_declaration_statement: ($) =>
+      prec(
+        5,
+        seq(
+          $.identifier,
+          $.type_annotation_operator,
+          optional($.type),
+          $.assignment_operator,
+          $._expression,
+        ),
+      ),
+
+    variable_assignment_statement: ($) =>
+      seq(
+        $.identifier,
+        choice($.assignment_operator, $.compound_assignment_operator),
+        $._expression,
+      ),
+
+    while_statement: ($) => seq("while", $._expression, $.block),
+
+    if_statement: ($) =>
+      seq(
+        "if",
+        $._expression,
+        $.block,
+        optional(repeat($.else_if_statement)),
+        optional($.else_statement),
+      ),
+
+    else_if_statement: ($) => seq("elif", $._expression, $.block),
+
+    else_statement: ($) => seq("else", $.block),
+
+    return_statement: ($) => seq("return", $._expression),
+
+    // Expressions
+
+    binary_expression: ($) =>
+      prec.right(
+        seq(
+          field("left", $._expression),
+          choice($.binary_operator, $.comparison_operator),
+          field("right", $._expression),
+        ),
+      ),
+
+    unary_expression: ($) => prec.right(seq($.unary_operator, $._expression)),
 
     call_expression: ($) =>
       seq(
@@ -122,60 +172,6 @@ export default grammar({
         "(",
         field("arguments", $.arguments),
         ")",
-      ),
-
-    number_expression: ($) =>
-      prec.right(
-        choice(
-          seq(
-            choice($.number, $.identifier),
-            $.binary_operator,
-            choice($.number, $.identifier, $.number_expression),
-          ),
-          seq($.unary_operator, $.number),
-        ),
-      ),
-
-    arguments: ($) =>
-      seq(
-        choice($._expression, $.number, $.string, $.identifier),
-        repeat(
-          seq(",", choice($._expression, $.number, $.string, $.identifier)),
-        ),
-      ),
-
-    comparison: ($) =>
-      seq(
-        choice($._expression, $.number, $.string, $.identifier),
-        $.comparison_operator,
-        choice($._expression, $.number, $.string, $.identifier),
-      ),
-
-    _condition: ($) => choice($._expression, $.comparison, $.number),
-
-    if_statement: ($) =>
-      seq(
-        "if",
-        $._condition,
-        $.block,
-        optional(choice($.else_if_statement, $.else_statement)),
-      ),
-
-    else_if_statement: ($) =>
-      seq(
-        "elif",
-        $._condition,
-        $.block,
-        optional(choice($.else_if_statement, $.else_statement)),
-      ),
-
-    else_statement: ($) => seq("else", $.block),
-
-    while_statement: ($) => seq("while", $._condition, $.block),
-
-    return_statement: ($) =>
-      prec.right(
-        seq("return", choice($._expression, $.number, $.string, $.identifier)),
       ),
   },
 });
