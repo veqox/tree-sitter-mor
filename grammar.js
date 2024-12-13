@@ -62,13 +62,17 @@ export default grammar({
       ),
 
     _expression: ($) =>
-      choice(
-        $.number,
-        $.identifier,
-        $.string,
-        $.binary_expression,
-        $.unary_expression,
-        $.call_expression,
+      prec(
+        10,
+        choice(
+          $.number,
+          $.identifier,
+          $.string,
+          $.binary_expression,
+          $.unary_expression,
+          $.call_expression,
+          $.bracket_expression,
+        ),
       ),
 
     _expression_statement: ($) =>
@@ -173,5 +177,7 @@ export default grammar({
         field("arguments", $.arguments),
         ")",
       ),
+
+    bracket_expression: ($) => seq("(", $._expression, ")"),
   },
 });

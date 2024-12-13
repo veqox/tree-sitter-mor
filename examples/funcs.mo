@@ -1,5 +1,5 @@
 fib :: (n: u32) -> u32 {
-    res := n - 2 + n - 1
+    res := n - (2 + n - 1);
 
     return res
 }
